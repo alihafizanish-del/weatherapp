@@ -1,54 +1,75 @@
-
-
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pro Weather — Keyless</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app" role="main" aria-labelledby="app-title">
+    <section class="card">
+      <header class="card-header">
+        <h1 id="app-title">🌤 Pro Weather (Keyless)</h1>
+        <div class="controls-row">
+          <input id="cityInput" type="search" placeholder="City or country" aria-label="City or country" />
+          <button id="searchBtn" class="btn">Search</button>
+          <button id="geoBtn" class="btn icon-btn" title="Use my location">📍</button>
+        </div>
+        <div class="toggles">
+          <label class="switch">
+            <input type="checkbox" id="unitToggle" />
+            <span class="slider"></span>
+          </label>
+          <small id="unitLabel">°C</small>
+        </div>
+      </header>
+
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+
+      <section id="result" class="result" hidden>
+        <div class="top-row">
+          <div class="location">
+            <img id="flag" class="flag" alt="" width="48" height="32" />
+            <h2 id="locationName"></h2>
+            <p id="updated" class="muted"></p>
+          </div>
+
+          <div class="weather-visual">
+            <div id="iconWrap" class="icon-wrap" aria-hidden="true"></div>
+            <div class="temps">
+              <div id="tempVal" class="temp-val"></div>
+              <div id="condText" class="cond-text muted"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="details">
+          <div class="detail-item"><strong>Wind:</strong> <span id="wind"></span></div>
+          <div class="detail-item"><strong>Pressure:</strong> <span id="pressure"></span></div>
+          <div class="detail-item"><strong>Humidity:</strong> <span id="humidity"></span></div>
+          <div class="detail-item"><strong>Coords:</strong> <span id="coords"></span></div>
+        </div>
+      </section>
+
+      <footer class="card-footer">
+        <small class="muted">Data from OpenStreetMap & Open-Meteo • No API key required</small>
+      </footer>
+    </section>
+  </main>
+
+  <script src="index.js"></script>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Weather App (Keyless)</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #6dd5fa, #2980b9);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .weather-container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 15px;
-      width: 420px;
-      text-align: center;
-      box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
-    }
-    h2 { margin-bottom: 20px; color: #333; }
-    input {
-      width: 70%; padding: 12px; border: 1px solid #ccc;
-      border-radius: 8px; outline: none; margin-bottom: 15px;
-    }
-    button {
-      padding: 12px 18px; margin: 5px; border: none;
-      border-radius: 8px; background: #2980b9; color: white;
-      font-size: 15px; cursor: pointer; transition: 0.3s;
-    }
-    button:hover { background: #1c5984; }
-    .weather-result {
-      margin-top: 20px; display: none; padding: 20px;
-      border-radius: 10px; background: #f3f9ff;
-      box-shadow: inset 0px 0px 8px rgba(0, 0, 0, 0.1);
-    }
-    .weather-result p { font-size: 18px; margin: 8px 0; color: #444; }
-    .flag {
-      width: 50px; height: 30px; border-radius: 5px; margin-bottom: 10px;
-    }
-    .icon {
-      width: 80px; height: 80px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="weather-container">
@@ -68,72 +89,6 @@
     </div>
   </div>
 
-  <script>
-    let fetchedData = null;
-
-    document.getElementById("searchBtn").addEventListener("click", async () => {
-      const query = document.getElementById("cityInput").value.trim();
-      if (!query) return alert("Please enter city or country!");
-
-      // First, get lat/lon via OpenStreetMap Nominatim (no key required)
-      try {
-        const locRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-        const locJson = await locRes.json();
-        if (!locJson.length) throw new Error("Location not found");
-
-        const { lat, lon, display_name } = locJson[0];
-
-        // Now fetch weather via Open-Meteo (no key)
-        const weatherRes = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=celsius&windspeed_unit=kmh`
-        );
-        const weatherJson = await weatherRes.json();
-        if (!weatherJson.current_weather) throw new Error("Weather data unavailable");
-
-        fetchedData = {
-          display_name, lat, lon, tempC: weatherJson.current_weather.temperature,
-          // Open-meteo gives temp only in Celsius; we convert manually
-          tempF: (weatherJson.current_weather.temperature * 9 / 5 + 32).toFixed(2),
-          iconCode: weatherJson.current_weather.weathercode
-        };
-
-        alert("✔️ Data fetched! Now click 'Show Weather'");
-      } catch (err) {
-        alert(err.message);
-        fetchedData = null;
-      }
-    });
-
-    document.getElementById("showBtn").addEventListener("click", () => {
-      if (!fetchedData) return alert("Please fetch data first!");
-
-      // Location display
-      document.getElementById("location").innerText = `Location: ${fetchedData.display_name}`;
-
-      // Flag: use country code from display_name (hacky but simple)
-      const countryMatch = fetchedData.display_name.match(/,\s*([A-Za-z\s]+)$/);
-      if (countryMatch) {
-        const countryName = countryMatch[1].trim();
-        // Quick country name to code lookup (can improve)
-        const codes = { Pakistan: 'pk', USA:'us', Canada:'ca', India:'in', UK:'gb' };
-        const code = codes[countryName] || countryName.slice(0,2).toLowerCase();
-        document.getElementById("flag").src = `https://flagcdn.com/w40/${code}.png`;
-      }
-
-      // Weather icon: map weathercode to icon (simplified)
-      const icons = {
-        0: "☀️", 1: "🌤", 2: "⛅", 3: "☁️", 45: "🌫",
-        48: "🌫", 51: "🌦", 61: "🌧", 71: "🌨", 80: "🌧", 95: "🌩"
-      };
-      document.getElementById("weatherIcon").alt = icons[fetchedData.iconCode] || "🌈";
-      document.getElementById("weatherIcon").title = icons[fetchedData.iconCode] || "";
-
-      document.getElementById("tempC").innerText = `Temperature: ${fetchedData.tempC} °C`;
-      document.getElementById("tempF").innerText = `Temperature: ${fetchedData.tempF} °F`;
-      document.getElementById("condition").innerText = `Weather Code: ${fetchedData.iconCode}`;
-
-      document.getElementById("weatherResult").style.display = "block";
-    });
-  </script>
+  <script src="index.js"></script>
 </body>
-</html> 
+</html> -->

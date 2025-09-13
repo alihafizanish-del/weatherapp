@@ -1,0 +1,43 @@
+# 🌤 Pro Weather App (No API Key)
+
+A lightweight, professional weather app built with **HTML, CSS, and JavaScript**.  
+It uses **OpenStreetMap (Nominatim)** for geocoding and **Open-Meteo** for weather data — both are free and require **no API key**.
+
+---
+
+## 🚀 Features
+- Search weather by **city / country name**
+- **Geolocation** support (📍 button finds your current location)
+- Toggle between **°C and °F**
+- Clean & modern responsive UI (desktop + mobile)
+- Weather condition **icons & text descriptions**
+- Shows **wind speed, pressure, humidity** (extendable)
+- Accessible (ARIA roles, keyboard-friendly)
+- Powered by **open APIs** — no signup needed
+
+---
+
+## 🖼️ Screenshots
+### Desktop
+![screenshot](assets/screenshot-desktop.png)
+
+### Mobile
+![screenshot](assets/screenshot-mobile.png)
+
+---
+
+## 🛠️ Tech Stack
+- **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
+- **APIs:** Nominatim (OpenStreetMap), Open-Meteo
+- **Hosting:** Works perfectly on GitHub Pages, Netlify, Vercel, etc.
+
+---
+
+## 📦 How to Run Locally
+```bash
+# clone the repo
+git clone https://github.com/yourusername/weather-app.git
+cd weather-app
+
+# open in your browser
+open index.html
